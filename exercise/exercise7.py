@@ -20,6 +20,7 @@ TIPS:
 
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import sys 
 
 newFlower = [5.8, 3.0, 4.9, 1.6]
@@ -49,13 +50,8 @@ def k_nearest_neighbors (db, new_flower, k):
                 neighbors[-1] = res
                 neighbors = sorted(neighbors)
                 flowers.insert(index,n)
-    
-    print(neighbors)
-    print(flowers[0:k])
-    
     names = {}
     for n in range(k):
-        print(db.iloc[flowers[n], 4])
         if db.iloc[flowers[n], 4] in names.keys():
             names[db.iloc[flowers[n], 4]] += 1
         else:
@@ -65,9 +61,53 @@ def k_nearest_neighbors (db, new_flower, k):
     k=list(names.keys())
     print("\n And the winner is: ",k[v.index(max(v))])
 
-df = pd.read_csv("iris.data", names = ["param0","param1", "param2", "param3", "name"])
+df = pd.read_csv("iris.data", names = ["SepalLength","SepalWidth", "PetalLength", "PetalWidth", "names"])
 k_nearest_neighbors(df, newFlower, 5)
 print("")
 k_nearest_neighbors(df, newFlower, 10)
 print("")
 k_nearest_neighbors(df, newFlower, 15)
+
+
+listnames = []
+parameters = enumerate(["SepalLength","SepalWidth", "PetalLength", "PetalWidth", "names"])
+for flower in df.index:
+    if df.iloc[flower, -1] in listnames:
+        plt.plot(df.iloc[flower, 0], df.iloc[flower, 1], 'o', label=listnames, c=colors)
+    else:
+        listnames.append(df.iloc[flower, -1])
+        colors = np.random.rand(3,)
+        plt.plot(df.iloc[flower, 0], df.iloc[flower, 1], 'o', label=listnames, c=colors)
+plt.show()    
+    
+
+listnames = []
+for flower in df.index:
+    if df.iloc[flower, -1] in listnames:
+        plt.plot(df.iloc[flower, 0], df.iloc[flower, 2], 'o', label=listnames, c=colors)
+    else:
+        listnames.append(df.iloc[flower, -1])
+        colors = np.random.rand(3,)
+        plt.plot(df.iloc[flower, 0], df.iloc[flower, 2], 'o', label=listnames, c=colors)
+plt.show()  
+
+listnames = []
+for flower in df.index:
+    if df.iloc[flower, -1] in listnames:
+        plt.plot(df.iloc[flower, 1], df.iloc[flower, 3], 'o', label=listnames, c=colors)
+    else:
+        listnames.append(df.iloc[flower, -1])
+        colors = np.random.rand(3,)
+        plt.plot(df.iloc[flower, 1], df.iloc[flower, 3], 'o', label=listnames, c=colors)
+plt.show()  
+
+listnames = []
+for flower in df.index:
+    if df.iloc[flower, -1] in listnames:
+        plt.plot(df.iloc[flower, 2], df.iloc[flower, 3], 'o', label=listnames, c=colors)
+    else:
+        listnames.append(df.iloc[flower, -1])
+        colors = np.random.rand(3,)
+        plt.plot(df.iloc[flower, 2], df.iloc[flower, 3], 'o', label=listnames, c=colors)
+plt.legend(listnames)
+plt.show()  
