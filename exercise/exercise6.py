@@ -14,24 +14,23 @@ TIPS:
 
 import pandas as pd
 import numpy as np
+import sys
 
 
 new_flower = np.array([5.2,2.3,3.2,1.1])
 
 df = pd.read_csv("iris.data", names = ["param0","param1", "param2", "param3", "name"])
 
-def near_flower(df, new_flower):
-    lowest_distance = np.inf
-    lowest_flower_index = -1
-    for n in range(len(df)):
-        old_flower = df.iloc[n,0:4]    
-        res = np.linalg.norm(old_flower - new_flower)
-        if lowest_distance >= res:
-            lowest_distance = res
-            lowest_flower_index = n;
-    print("new flower: ", new_flower,)
-    print(lowest_flower_index)
-    print("is a: ", df.iloc[lowest_flower_index][4])
-    print(df.iloc[lowest_flower_index])
+def near_flower(db, new_flower):
+    nearest_distance = sys.maxsize
+    nearest_flower_index = -1
+    for flower in range(len(df)):
+        stored_flower = db.iloc[flower,0:4]    
+        distance = np.linalg.norm(stored_flower - new_flower)
+        if nearest_distance >= distance:
+            nearest_distance = distance
+            nearest_flower_index = flower;
+    print(nearest_flower_index)
+    return nearest_flower_index;
 
 near_flower(df, new_flower)
