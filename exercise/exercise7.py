@@ -4,166 +4,131 @@
 Created on Tue Feb 26 10:10:18 2019
 @author: francesco
 """
-#Given the iris dataset CSV file and a new unseen vector representing a flower, 
-#define a function that classifies the new flower using its k-nearest neighbors. 
-#Apply the algorithm using k in {5,10,20} and print the label of the results.
-#
-#Also, create 2-dimensional scatter plots of the iris dataset considering the given pairs of dimensions, 
-#and draw the points of each class with a different color. 
-#Take a look at the plots and answer the following question: 
-#    if you could use only one of the given pairs to apply k-nearest neighbors, 
-#    which pair would you use?
-#
-#TIPS:
-#* the plots should be similar to the following:
- 
+
+# Exercise 7
+# Given the iris dataset CSV file and a new unseen vector representing a flower, 
+# define a function that classifies the new flower using its k-nearest neighbors. 
+# Apply the algorithm using k = {5, 10, 20} and print the label of the results.
+
+# Also, create 2-dimensional scatter plots of the iris dataset considering the 
+# given pairs of dimensions, and draw the points of each class with a different 
+# color.
+
+# Take a look at the plots and answer the following question: if you could use 
+# only one of the given pairs to apply k-nearest neighbors, which pair would 
+# you use?
 
 import pandas as pd
-import numpy as np
+import math
 import matplotlib.pyplot as plt
-import sys 
+import sys
 
-newFlower = [5.4, 3.8, 1.7, 0.3]
+def euclidean_distance(s1,s2):
+    """
+    Compute the Euclidean distance between two n-dimensional objects.
+    """    
+    tmpsum = 0
+    
+    for index,value in enumerate(s1):
+        tmpsum += (s1[index]-s2[index])**2
+    
+    return math.sqrt(tmpsum)
+
+def find_distances(frame, newPoint):
+    """
+    Find the distance between a point and all the points in a dataframe, and
+    sort the elements in ascending order.
+    """                
+    distances = []    
+    
+    # iterate over all rows in the dataframe
+    for index in range(frame.shape[0]):
+
+        # get all columns of a row (except the label) 
+        point = frame.iloc[index,:-1]        
+
+    	# compute the distance, then save distance and label 
+        # (use distance as first value)
+        distance = euclidean_distance(point, newPoint)
+        if distance == 0:
+            distances.append((distance, frame.iloc[index,-1]))                
+        else:
+            distances.append((sys.maxsize, frame.iloc[index,-1]))                
+            
+
+    distances.sort()    
+    
+    return distances
+
+def k_nn(frame, newPoint, colClass, k):
+    """
+    Predict the class of a point by using the k-nearest neighbor algorithm on 
+    the points of a dataframe.
+    """                
+    counts = []
+    
+    # find all distances wrt the newPoint
+    dist = find_distances(frame, newPoint)
+
+    # find the nearest k points, extract their labels and save them in a list
+    labels = [label for distance,label in dist[:k]] 
+    
+    # for each class label, count how many occurrencies have been found
+    for label in frame[colClass].unique():
+        # save the number of occurrencies in a list of tuples (number, label)
+        counts.append((labels.count(label), label))        
+    
+    # sort the list in descending order, and use the first label of the tuples'
+    # list to make the prediction    
+    counts.sort(reverse=True)
+    prediction = counts[0][1]    
+    
+    return prediction
+
+
+def plot_data(frame, col1, col2, colClass):
+    """
+    Print a 2-d scatter plot of the points in the dataframe using col1 and col2;
+    the string colClass is the label, used to decide the color of the points.
+    """
+    # for each class, print the data points
+    for label in frame[colClass].unique():    
+        mask = (frame[colClass] == label)
+        points = frame[mask]	    
+        plt.plot(points[col1], points[col2], 'o', label=label)
+        
+    plt.title(col1+" vs "+ col2)
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+# -----------------------------------------------------------------------------
+
+# read and define data
+frame = pd.read_csv("iris.data", names = ["SepalLength","SepalWidth","PetalLength","PetalWidth","Class"])
+newFlower = [5.8, 3.0, 4.9, 1.6]
+
+# compute the prediction using different k
+k = 5
+prediction = k_nn(frame, newFlower, "Class", k)
+print("Using k-nearest neighbors with k =", str(k) + ",the point", newFlower, 
+      "is classified as", prediction)
+
+k = 10
+prediction = k_nn(frame, newFlower, "Class", k)
+print("Using k-nearest neighbors with k =", str(k) + ",the point", newFlower, 
+      "is classified as", prediction)
+
+k = 20
+prediction = k_nn(frame, newFlower, "Class", k)
+print("Using k-nearest neighbors with k =", str(k) + ",the point", newFlower, 
+      "is classified as", prediction)
+
+# plot data using the given pairs
 pairs = [("SepalLength","SepalWidth"),
          ("PetalLength","PetalWidth"),
          ("PetalLength","SepalLength"),
          ("PetalWidth","SepalWidth")]
 
-
-
-def near_flower(db, new_flower):
-    nearest_distance = sys.maxsize
-    nearest_flower_index = -1
-    for flower in range(db.shape[0]):
-        stored_flower = db.iloc[flower,0:4]    
-        distance = np.linalg.norm(stored_flower - new_flower)
-        if nearest_distance >= distance:
-            nearest_distance = distance
-            nearest_flower_index = flower;
-    print(nearest_flower_index)
-    return nearest_flower_index;
-
-
-def k_nearest_neighbors(df, newFlower, k):
-    mask = (df["names"] != None)
-    db = df[mask]
-    
-    bestFlowers = []
-    nameFlowers = pd.unique(df.iloc[:,-1])
-    
-    nearFlower = near_flower(db, newFlower)
-    bestFlowers.append(nearFlower)
-        
-    mask[nearFlower] = False 
-    db = df[mask]    
-        
-    
-    print(mask)
-    
-    print(db)
-    
-   
-    
-    nearFlower = near_flower(db, newFlower)
-    bestFlowers.append(nearFlower)    
-    mask[nearFlower] = False 
-    db = df[mask]    
-        
-    
-    print(mask)
-    
-    print(db)
-    
-    
-#    
-#    for i in len(bestFlowers):
-#        print (db[bestFlowers[i],-1])
-    
-        
-df = pd.read_csv("iris.data", names = ["SepalLength","SepalWidth", "PetalLength", "PetalWidth", "names"])
-
-k_nearest_neighbors(df, newFlower, 20)
-        
-        
-        
-    
-#
-#def k_nearest_neighbors (db, new_flower, k):
-#    #init dictionary
-#    neighbors = []
-#    flowers = []
-#    for i in range(k):
-#        neighbors.append(sys.maxsize)
-#        flowers.append(-1)
-#
-#    # for all elements in db 
-#    for n in range(len(db)):
-#        old_flower = df.iloc[n,0:4]                     #take one elem
-#        res = np.linalg.norm(old_flower - new_flower)   #compare it 
-#        
-#        light = True
-#        for index in range(k):
-#            if res <= neighbors[index-1] and light:
-#                light = False
-#                neighbors[-1] = res
-#                neighbors = sorted(neighbors)
-#                flowers.insert(index,n)
-#    names = {}
-#    for n in range(k):
-#        if db.iloc[flowers[n], 4] in names.keys():
-#            names[db.iloc[flowers[n], 4]] += 1
-#        else:
-#            names[db.iloc[flowers[n], 4]] = 0
-#     
-#    v=list(names.values())
-#    k=list(names.keys())
-#    print("\n And the winner is: ",k[v.index(max(v))])
-
-#print("")
-#k_nearest_neighbors(df, newFlower, 10)
-#print("")
-#k_nearest_neighbors(df, newFlower, 20)
-
-
-#listnames = []
-#parameters = enumerate(["SepalLength","SepalWidth", "PetalLength", "PetalWidth", "names"])
-#for flower in df.index:
-#    if df.iloc[flower, -1] in listnames:
-#        plt.plot(df.iloc[flower, 0], df.iloc[flower, 1], 'o', label=listnames, c=colors)
-#    else:
-#        listnames.append(df.iloc[flower, -1])
-#        colors = np.random.rand(3,)
-#        plt.plot(df.iloc[flower, 0], df.iloc[flower, 1], 'o', label=listnames, c=colors)
-#plt.show()    
-#    
-#
-#listnames = []
-#for flower in df.index:
-#    if df.iloc[flower, -1] in listnames:
-#        plt.plot(df.iloc[flower, 0], df.iloc[flower, 2], 'o', label=listnames, c=colors)
-#    else:
-#        listnames.append(df.iloc[flower, -1])
-#        colors = np.random.rand(3,)
-#        plt.plot(df.iloc[flower, 0], df.iloc[flower, 2], 'o', label=listnames, c=colors)
-#plt.show()  
-#
-#listnames = []
-#for flower in df.index:
-#    if df.iloc[flower, -1] in listnames:
-#        plt.plot(df.iloc[flower, 1], df.iloc[flower, 3], 'o', label=listnames, c=colors)
-#    else:
-#        listnames.append(df.iloc[flower, -1])
-#        colors = np.random.rand(3,)
-#        plt.plot(df.iloc[flower, 1], df.iloc[flower, 3], 'o', label=listnames, c=colors)
-#plt.show()  
-#
-#listnames = []
-#for flower in df.index:
-#    if df.iloc[flower, -1] in listnames:
-#        plt.plot(df.iloc[flower, 2], df.iloc[flower, 3], 'o', label=listnames, c=colors)
-#    else:
-#        listnames.append(df.iloc[flower, -1])
-#        colors = np.random.rand(3,)
-#        plt.plot(df.iloc[flower, 2], df.iloc[flower, 3], 'o', label=listnames, c=colors)
-#plt.legend(listnames)
-#plt.show()  
+for pair in pairs:        
+    plot_data(frame, pair[0], pair[1], "Class")
