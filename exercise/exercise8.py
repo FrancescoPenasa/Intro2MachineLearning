@@ -4,19 +4,17 @@
 Created on Mon Mar 11 15:59:31 2019
 
 @author: francesco
+
+EXERCISE 8
+Given the two spirals dataset CSV file, create a 2-dimensional scatter plot of the spirals, 
+using a different color for each spiral. 
+Then apply the k-nearest neighbors algorithm to all the elements of the dataset 
+using k  ∈  {3, 5, 10} and compute precision, accuracy and recall.
+    
+TIPS:
+consider spiral 1 as the positive class
+when evaluating, do not include the point you are predicting in the neighbors (this would be cheating)
 """
-
-#Given the two spirals dataset CSV file, create a 2-dimensional scatter plot of the spirals, 
-#using a different color for each spiral. 
-#Then apply the k-nearest neighbors algorithm to all the elements of the dataset 
-#using k  ∈  {3, 5, 10} and compute precision, accuracy and recall.
-#
-#TIPS:
-#
-#consider spiral 1 as the positive class
-#when evaluating, do not include the point you are predicting in the neighbors (this would be cheating)
-
-
 
 import pandas as pd
 import numpy as np
@@ -86,30 +84,30 @@ def k_nn(frame, newPoint, colClass, k):
     
     return prediction
 
+def colored_plot(frame, colorMap):
+    """
+    Plot the frame with different label based on the string colorMap.
+    """       
+    for pattern in frame[colorMap].unique():
+        mask = (frame[colorMap] == pattern)
+        points = frame[mask]    
+        x = points["x"]
+        y = points["y"]
+        plt.plot(x, y, 'o', label=pattern)
+        
+    plt.legend()
+    plt.show()
 
 
-df = pd.read_csv("spirals_density1.csv")
-
-for pattern in df["pattern"].unique():
-    mask = (df["pattern"] == pattern)
-    points = df[mask]    
-    x = points["x"]
-    y = points["y"]
-    plt.plot(x, y, 'o', label=pattern)
-    
-plt.legend()
-plt.show()
-   
-
-
-for k in [3,5,10]:
+def k_nn_all(df, k, spec):
+    """
+    k_nn on all the rows of the frame excluding the one tested
+    """
+    # truePositive, falsePositive, falseNegative, trueNegative
     confusionMatrix = [0,0,0,0] 
     
-    for tested in range(df.shape[0]-1):    
-        prediction = k_nn(df, df.iloc[tested], "pattern", k)
-        
-        # truePositive, falsePositive, falseNegative, trueNegative
-        
+    for tested in range(df.shape[0]):    
+        prediction = k_nn(df, df.iloc[tested], spec, k)    
         if prediction == df.iloc[tested,-1] and prediction == 1:    
             confusionMatrix[0] += 1
         elif prediction != df.iloc[tested,-1] and prediction == 1:    
@@ -119,16 +117,20 @@ for k in [3,5,10]:
         elif prediction == df.iloc[tested,-1] and prediction == 0:    
             confusionMatrix[3] += 1
     
-            #acuracty = truepositive+truenegative / all
-            #precision = truepos / truepo + falsepo
-            #recall trueposi / truepos + falsenega
-            
     accuracy = (confusionMatrix[0]+confusionMatrix[3]) / np.sum(confusionMatrix)
     precision = confusionMatrix[0] / (confusionMatrix[0]+confusionMatrix[1])
     recall = confusionMatrix[0] / (confusionMatrix[0]+confusionMatrix[2])
-    print(confusionMatrix)
-    print("k: ", k)
-    print("accuracy: ", accuracy)
-    print("precision: ", precision)
-    print("recall: ", recall)
-    print("")
+    
+    string = "k: " + str(k) 
+    string += "\naccuracy: " + str(accuracy)
+    string += ", precision: " + str(precision)
+    string += ", recall: " + str(recall)
+    print(string)
+
+
+# --------------------------------------------------------------------------- #
+df = pd.read_csv("spirals_density1.csv")
+colored_plot(df, "pattern")
+k_nn_all(df, 3, "pattern")
+#k_nn_all(df, 5, "pattern")
+#k_nn_all(df, 10, "pattern")

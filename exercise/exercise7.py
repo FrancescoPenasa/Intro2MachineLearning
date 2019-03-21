@@ -3,20 +3,20 @@
 """
 Created on Tue Feb 26 10:10:18 2019
 @author: francesco
+
+Exercise 7
+ Given the iris dataset CSV file and a new unseen vector representing a flower, 
+ define a function that classifies the new flower using its k-nearest neighbors. 
+ Apply the algorithm using k = {5, 10, 20} and print the label of the results.
+
+ Also, create 2-dimensional scatter plots of the iris dataset considering the 
+ given pairs of dimensions, and draw the points of each class with a different 
+ color.
+
+ Take a look at the plots and answer the following question: if you could use 
+ only one of the given pairs to apply k-nearest neighbors, which pair would 
+ you use?
 """
-
-# Exercise 7
-# Given the iris dataset CSV file and a new unseen vector representing a flower, 
-# define a function that classifies the new flower using its k-nearest neighbors. 
-# Apply the algorithm using k = {5, 10, 20} and print the label of the results.
-
-# Also, create 2-dimensional scatter plots of the iris dataset considering the 
-# given pairs of dimensions, and draw the points of each class with a different 
-# color.
-
-# Take a look at the plots and answer the following question: if you could use 
-# only one of the given pairs to apply k-nearest neighbors, which pair would 
-# you use?
 
 import pandas as pd
 import math
@@ -86,21 +86,27 @@ def k_nn(frame, newPoint, colClass, k):
     return prediction
 
 
-def plot_data(frame, col1, col2, colClass):
+def colored_plot_pairs(frame, pairs, colorMap):
     """
-    Print a 2-d scatter plot of the points in the dataframe using col1 and col2;
-    the string colClass is the label, used to decide the color of the points.
-    """
-    # for each class, print the data points
-    for label in frame[colClass].unique():    
-        mask = (frame[colClass] == label)
-        points = frame[mask]	    
-        plt.plot(points[col1], points[col2], 'o', label=label)
+    Plot the frame with different label based on the string colorMap.
+    """       
+    for i in range(len(pairs)):
+        x_label = pairs[i][0]
+        y_label = pairs[i][1]
         
-    plt.title(col1+" vs "+ col2)
-    plt.legend()
-    plt.grid(True)
-    plt.show()
+        for pattern in frame[colorMap].unique():
+            mask = (frame[colorMap] == pattern)
+            points = frame[mask]    
+            x = points[x_label]
+            y = points[y_label]
+            plt.title(x_label+"-"+y_label)
+            plt.xlabel(x_label)
+            plt.ylabel(y_label)
+            plt.plot(x, y, 'o', label=pattern)
+            
+        plt.grid(True)
+        plt.legend()
+        plt.show()
 
 # -----------------------------------------------------------------------------
 
@@ -130,5 +136,4 @@ pairs = [("SepalLength","SepalWidth"),
          ("PetalLength","SepalLength"),
          ("PetalWidth","SepalWidth")]
 
-for pair in pairs:        
-    plot_data(frame, pair[0], pair[1], "Class")
+colored_plot_pairs(frame, pairs, "Class")
