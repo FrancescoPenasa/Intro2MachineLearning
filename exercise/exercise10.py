@@ -71,7 +71,9 @@ def wk_nn(frame, newPoint, weigth, colClass, k):
     Predict the class of a point by using the k-nearest neighbor algorithm on 
     the points of a dataframe.
     """                
-    num = {"Iris-virginica":0,"Iris-versicolor":0,"Iris-setosa":0}
+    num = {"Iris-virginica":0,
+           "Iris-versicolor":0,
+           "Iris-setosa":0}
     denum = 0
     d0 = 1
 
@@ -93,7 +95,8 @@ def wk_nn(frame, newPoint, weigth, colClass, k):
             mx = num[label]/denum
             prediction = label
         
-    
+    print("prediction: ", prediction)
+    print("likelihood: ", mx)
     return(prediction)
 
 def init_confusionMatrix(df, spec):
@@ -115,6 +118,7 @@ def wknn_all(df, weight, spec, k):
     
     
     for tested in range(df.shape[0]):
+        print("test: ",df.iloc[tested, -1])
         prediction = wk_nn(df, df.iloc[tested], weight, spec, k)    
         
         if prediction == df.iloc[tested,-1]:

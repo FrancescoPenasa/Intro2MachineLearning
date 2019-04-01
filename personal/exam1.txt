@@ -1,0 +1,31 @@
+State if the following statements about goodness functions are true or false.
+Goodness functions take measurements as input
+TRUE
+
+Measurements can only be numerical
+FALSE
+
+Standar mathematical optimization requires the existence of goodness functions to be optimized, and the definition of these functions is usually feasible in the real world.
+FALSE
+
+Machine learning requires the definition of a goodness function to be optimized.
+FALSE
+
+Machine learning techniques can build good models only if abundant data is available
+TRUE
+
+Kriging is a technique originally built to identify the best map coordinates to dig gold mines.
+State if the following statements about Kriging are true or false
+
+The goodness function to be optimized is Gold(x), the quantity of gold extracted from a mine at position x.
+TRUE
+
+The measurements are the gold quantities extracted in different points.
+FALSE
+
+Kriging is an example of descriptive analytics.
+FALSE
+
+The model of the goodness function, built using measurements aims at generalizing the results obtained during the experiments.
+TRUE
+
