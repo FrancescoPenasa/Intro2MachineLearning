@@ -171,7 +171,7 @@ def colored_plot_3D(frame, axis, colorMap):
 frame = pd.read_csv("iris.data", names = ["SepalLength","SepalWidth","PetalLength","PetalWidth","Class"])
 #newFlower = [5.8, 3.0, 4.9, 1.6]
 #colored_plot_3D(frame, ["PetalLength","PetalWidth","SepalLength"], "Class")
-#colored_plot_3D(frame, ["PetalLength","PetalWidth","SepalWidth"], "Class")
+#colored_plot_3D(frame, ["PetalLength","PetalWidth","SepalWidth"], "Class")  #better one
 
 wknn_all(frame, "PetalLength", "Class", 20)
 wknn_all(frame, "PetalWidth", "Class", 20)
