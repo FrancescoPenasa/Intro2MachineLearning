@@ -132,5 +132,5 @@ def k_nn_all(df, k, spec):
 df = pd.read_csv("spirals_density1.csv")
 colored_plot(df, "pattern")
 k_nn_all(df, 3, "pattern")
-#k_nn_all(df, 5, "pattern")
-#k_nn_all(df, 10, "pattern")
+k_nn_all(df, 5, "pattern")
+k_nn_all(df, 10, "pattern")

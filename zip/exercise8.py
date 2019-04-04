@@ -133,7 +133,7 @@ def compute_classification_metrics(frame, colClass, k):
 # -----------------------------------------------------------------------------
 
 # read data
-frame = pd.read_csv("/home/manuel/Dropbox/PhD/teaching/intro-to-ML/lecture4/material/spirals_density1.csv")
+frame = pd.read_csv("spirals_density1.csv")
 
 # plot the spirals
 plot_data(frame,"x","y","pattern")
